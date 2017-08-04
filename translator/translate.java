@@ -8,16 +8,16 @@ import java.io.*;
 //() after ref done done
 public class translate {
 	public static void main(String[] args) throws IOException{
-		int index = 3;
-		for(index = 4; index<10;index++){
+		int index = 1;
+		for(index = 1; index<2;index++){
 		String prelude_file = "/Users/baidi/Desktop/intern_note/translator/bolognesa.match";
-		String sl_file = "/Users/baidi/Desktop/smtcomp14-sl-master/bench/sll0a_entl/bolognesa-10-e0"+index+".tptp.smt2";
+		String sl_file = "/Users/baidi/Desktop/smtcomp14-sl-master/bench/sll0a_entl/bolognesa-10-e01.tptp.smt2";
 		makeML(prelude_file,sl_file, index);
 		}
 	}
 	static void makeML(String prelude, String sl, int index) throws IOException{
 		BufferedWriter writer = null;
-		 final File Result = new File("/Users/baidi/Desktop/matching-logic-prover/ml2fol_translation/translate/bolognesa-10-e0"+index+".tptp.match");
+		 final File Result = new File("/Users/baidi/Desktop/matching-logic-prover/ml2fol_translation/translate/bolognesa-10-e01.tptp.match");
 		 writer = new BufferedWriter(new FileWriter(Result));
 		 File file = new File(prelude);
 	        BufferedReader reader = null;
@@ -109,7 +109,8 @@ public class translate {
 	            		haswrite = true;
 	            	}
 	            	if(tempString.indexOf("tobool")!=-1 && flag){
-	            		bool_int--;//not count paren in "(tobool"
+	            		//bool_int--;//not count paren in "(tobool"
+	            		intobool = true;
 	            		char[] chars = tempString.toCharArray();
 	            		int i = 0;
 		            	for(i = 0; i < chars.length; i++){
@@ -121,7 +122,7 @@ public class translate {
 		            	    		break;
 		            	    }
 		            	}
-		            	if(i!=chars.length && bool_int==0){
+		            	if(bool_int==0){
 		            		String news2 = tempString.substring(0,i+1)+")"+tempString.substring(i+1,chars.length);
 		            		tempString = news2;
 		            		intobool = false;
@@ -129,7 +130,6 @@ public class translate {
 		            	String news = tempString.replace("tobool", "not (floor ");
 	            		writer.write(news+"\n");
 	            		haswrite = true;
-	            		intobool = true;
 	            	}
 	            	/*(ref ... ...) => (ref (... ...))*/
 	            	if(tempString.indexOf("ref")!=-1 && flag){
