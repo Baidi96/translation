@@ -1419,8 +1419,12 @@ Heaps \buildrel \text{d{}ef}\over= Loc \rightharpoonup (Fields \to Val\cup Loc)
 Stacks \buildrel \text{d{}ef}\over= Var \to Val \cup Loc
 \end{equation*}
 The syntax of formulas of this variant is given by the following grammar.\\
-\emph{f} \in \mathbb{F} \ \text{field\ names} \quad \quad \emph{P} \in \mathbb{P} \ \text{recursive \ definition \ name}\\
+\emph{f} \in \mathbb{F} \ \text{field\ names} \quad \qquad \qquad \qquad \qquad \emph{P} \in \mathbb{P} \ \text{recursive \ definition \ name}\\
 \emph{x,y} \in \emph{Vars} \ \text{reference\ program\ vars}\qquad \emph{X,Y} \in \emph{LVars} \ \text{reference\ logical\ vars}\\
+\emph{d,D} \in \emph{DVars} \ \text{data\ variables}\qquad \qquad \quad $\Delta$ \ \text{data\ constraints}\\
+\emph{E,F} \Coloneqq \emph{x}\ |\ \emph{X}\qquad \qquad\qquad\qquad\qquad\quad \text{reference\ variables}\\
+$\rho$ \Coloneqq \{(\emph{f},\emph{E})\}\ |\ \{(\emph{f},\emph{D})\} \ |\ $\rho$\cup $\rho$ \qquad\qquad\quad\text{set of field references}\\
+$\Pi$ \Coloneqq \emph{E}=\emph{F}\ |\ \emph{E}\ne\emph{F} \ |\ $\Pi$ \wedge \ $\Pi$ \qquad\qquad \ \text{pure formulas}\\
 
 
 \section{Semantics of K}
