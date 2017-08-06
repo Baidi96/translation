@@ -1419,14 +1419,22 @@ Heaps \buildrel \text{d{}ef}\over= Loc \rightharpoonup (Fields \to Val\cup Loc)
 Stacks \buildrel \text{d{}ef}\over= Var \to Val \cup Loc
 \end{equation*}
 The syntax of formulas of this variant is given by the following grammar.\\
-\emph{f} \in \mathbb{F} \ \text{field\ names} \quad \qquad \qquad \qquad \qquad \emph{P} \in \mathbb{P} \ \text{recursive \ definition \ name}\\
+\emph{f} \in \mathbb{F} \ \text{field\ names} \quad \qquad \qquad \qquad \quad \ \ \emph{P} \in \mathbb{P} \ \text{recursive definition name}\\
 \emph{x,y} \in \emph{Vars} \ \text{reference\ program\ vars}\qquad \emph{X,Y} \in \emph{LVars} \ \text{reference\ logical\ vars}\\
 \emph{d,D} \in \emph{DVars} \ \text{data\ variables}\qquad \qquad \quad $\Delta$ \ \text{data\ constraints}\\
 \emph{E,F} \Coloneqq \emph{x}\ |\ \emph{X}\qquad \qquad\qquad\qquad\qquad\quad \text{reference\ variables}\\
 $\rho$ \Coloneqq \{(\emph{f},\emph{E})\}\ |\ \{(\emph{f},\emph{D})\} \ |\ $\rho$\cup $\rho$ \qquad\qquad\quad\text{set of field references}\\
-$\Pi$ \Coloneqq \emph{E}=\emph{F}\ |\ \emph{E}\ne\emph{F} \ |\ $\Pi$ \wedge \ $\Pi$ \qquad\qquad \ \text{pure formulas}\\
+$\Pi$ \Coloneqq \emph{E}=\emph{F}\ |\ \emph{E}\ne\emph{F} \ |\ $\Pi$ \wedge \ $\Pi$ \qquad\qquad \ \ \text{pure formulas}\\
+$\Sigma$ \Coloneqq \emph{emp}\ |\ \emph{junk}\ |\ \emph{E} \mapsto $\rho$\ \mid \emph(P(E,D)) \mid\ $\Sigma$ *$\Sigma$    \ \text{spatial formulas}\\
+\emph{A,B} $\overset{\Delta}{=}$\ \exists \emph{X},\emph{D}.\ $\Pi$ \wedge \ $\Sigma$ \ \wedge \ $\Delta$\ \qquad\qquad\qquad\quad \text{formulas}\\
+The logic allows to prove judgments of the form $(S,H)$ $\vDash$ $P$, where $S$ is a stack, $H$ is a heap, and $P$ is an assertion over the given stack and heap. The semantics are given as follows:\\
 
-
+The benchmarks of SL-COMP use inductive definitions and the general syntax and examples can be referred to the report on SL-COMP.\\
+The reason why separation logic with symbolic heaps is an instance of matching logic is that we can build a separation logic theory of this variant.\\
+$T_{\mathrm{SL}}$\ = \ \{S\ ,\ $\Sigma$\ ,\ A \}\\
+S\ = \ \{ \} \\
+$\Sigma$\ = \ \{ \}\\
+A\ = \ \{ \} \\
 \section{Semantics of K}
 
 Moved to a separate repository.
