@@ -1427,14 +1427,215 @@ $\rho$ \Coloneqq \{(\emph{f},\emph{E})\}\ |\ \{(\emph{f},\emph{D})\} \ |\ $\rho$
 $\Pi$ \Coloneqq \emph{E}=\emph{F}\ |\ \emph{E}\ne\emph{F} \ |\ $\Pi$ \wedge \ $\Pi$ \qquad\qquad \ \ \text{pure formulas}\\
 $\Sigma$ \Coloneqq \emph{emp}\ |\ \emph{junk}\ |\ \emph{E} \mapsto $\rho$\ \mid \emph(P(E,D)) \mid\ $\Sigma$ *$\Sigma$    \ \text{spatial formulas}\\
 \emph{A,B} $\overset{\Delta}{=}$\ \exists \emph{X},\emph{D}.\ $\Pi$ \wedge \ $\Sigma$ \ \wedge \ $\Delta$\ \qquad\qquad\qquad\quad \text{formulas}\\
-The logic allows to prove judgments of the form $(S,H)$ $\vDash$ $P$, where $S$ is a stack, $H$ is a heap, and $P$ is an assertion over the given stack and heap. The semantics are given as follows:\\
-
+The logic allows to prove judgments of the form $(S,H)$ $\vDash$ $P$, where $S$ is a stack, $H$ is a heap, and $P$ is an assertion over the given stack and heap. The semantics are given as follows:
+\begin{flalign*}
+   & (S,H) \models E = F  \ \text{iff} \  S(E) = S(F)&&\\
+   & (S,H) \models E \neq F \ \text{iff} \  S(E) \neq S(F)&&\\
+   & (S,H) \models \varphi \wedge \psi \ \text{iff} \ (S,H) \models \phi \ \text{and} \ (S,H) \models \psi&&\\
+    &(S,H) \models emp \ \text{iff} \ dom(H) = \emptyset&&\\
+    &(S,H) \models junk  \qquad  \text{always}&&\\
+    &(S,H) \models E \mapsto \{p\} \ \text{iff} \ dom(H) = \{(S(E),f_i) \mid (f_i,E_i) \in \{p\}\} &&\\ &\text{and for every} \ (f_i,E_i) \in \{p\} , \ H(S(E),f_i) = S(E_i) &&\\
+    &(S,H) \models \Sigma_1 \ast \Sigma_2 \ \text{iff} \  \exists H_1 , \ H_2 \ \text{s.t} \ ldom(H_1) \uplus ldom(H_2),(S,H_1) \models \Sigma_1, \ \text{and} \ (S,H_2) \models \Sigma_2&&\\
+    &(S,H) \models P(\text{E}) \ \text{iff} \ (S,H) \in  \mathbb{[P]}(P(E))&&\\
+    &(S,H) \models \exists X.\phi \ \text{iff} \ \text{there exists} \  l \in Loc \ \text{s.t.}  (S[X \gets l], H) \models \varphi&&
+\end{flalign*}
 The benchmarks of SL-COMP use inductive definitions and the general syntax and examples can be referred to the report on SL-COMP.\\
 The reason why separation logic with symbolic heaps is an instance of matching logic is that we can build a separation logic theory of this variant.\\
-$T_{\mathrm{SL}}$\ = \ \{S\ ,\ $\Sigma$\ ,\ A \}\\
-S\ = \ \{ \} \\
-$\Sigma$\ = \ \{ \}\\
-A\ = \ \{ \} \\
+$T_{\mathrm{SL}}$\ = \ \{\ S\ ,\ $\Sigma$\ ,\ A \}\\
+S\ = \ \{Sll\_t\ ,\ Subrecord\ , \ Record\ , \ Map \} \\
+$\Sigma$\ = \ \{nil\ ,\ emp\ ,\ ref\ , \ pto\ , \ ssep\ , \ sref\ , \ ls \ , \ all field names\}\\
+$\text{A}\ = \ \{\text{nil} \mapsto \text{y} = \bot\ , \text{ssep\ (*) is comm+assoc}\ , \ x \mapsto y * x \mapsto z = \bot \ ,\text{ls(in out) = (in = out) }\vee \text{(} \exists \text{u (in} \ne \text{out} \wedge \text{in} \mapsto \text{ref(u) * ls(u out))}\}$ \\
+----add explanation (and proof? ) to S Sigma and A-----\\
+Here we show an example of translation from the benchmark of SL-COMP to matching logic.\\
+Separation logic example:\\
+\begin{lstlisting}
+(declare-sort Sll_t 0)
+(declare-fun next () (Field Sll_t Sll_t))
+(define-fun ls ((?in Sll_t) (?out Sll_t)) Space
+(tospace (or (= ?in ?out)
+(exists ((?u Sll_t))
+(and (distinct ?in ?out) (tobool
+(ssep (pto ?in (ref next ?u)) (ls ?u ?out)
+)))))))
+(declare-fun x0 () Sll_t)
+(declare-fun x1 () Sll_t)
+(declare-fun x2 () Sll_t)
+(declare-fun x3 () Sll_t)
+(declare-fun x4 () Sll_t)
+(declare-fun x5 () Sll_t)
+(declare-fun x6 () Sll_t)
+(declare-fun x7 () Sll_t)
+(declare-fun x8 () Sll_t)
+(declare-fun x9 () Sll_t)
+(declare-fun x10 () Sll_t)
+(declare-fun x11 () Sll_t)
+(declare-fun x12 () Sll_t)
+(declare-fun x13 () Sll_t)
+(declare-fun x14 () Sll_t)
+(assert
+  (and 
+    (= nil nil)
+    (tobool 
+	(ssep
+		(ls  x2 x7) 
+		(pto x6 (ref next x1)) 
+		(pto x4 (ref next x9)) 
+		(pto x3 (ref next x2)) 
+		(pto x8 (ref next x4)) 
+		(ls  x10 x2) 
+		(pto x5 (ref next x7)) 
+		(pto x1 (ref next x6)) 
+		(pto x9 (ref next x1)) 
+		(ls  x7 x2) 
+		emp
+	) )
+  )
+)
+(assert
+  (not
+        (tobool 
+	(ssep
+		(ls  x6 x1) 
+		(ls  x10 x2) 
+		(ls  x8 x4) 
+		(ls  x3 x2) 
+		(ls  x5 x7) 
+		(ls  x4 x6) 
+		(ls  x2 x7) 
+		(ls  x7 x2) 
+		emp
+	) )
+  ))
+(check-sat)
+
+\end{lstlisting}
+Matching logic example:\\
+\begin{lstlisting}
+(declare-sort Sll_t)
+(declare-sort Subrecord)
+(declare-sort Record)
+(declare-sort Map)
+
+;Sll_t constants
+(declare-func x0 () Sll_t)
+(declare-func x1 () Sll_t)
+(declare-func x2 () Sll_t)
+(declare-func x3 () Sll_t)
+(declare-func x4 () Sll_t)
+(declare-func x5 () Sll_t)
+(declare-func x6 () Sll_t)
+(declare-func x7 () Sll_t)
+(declare-func x8 () Sll_t)
+(declare-func x9 () Sll_t)
+(declare-func x10 () Sll_t)
+(declare-func x11 () Sll_t)
+(declare-func x12 () Sll_t)
+(declare-func x13 () Sll_t)
+(declare-func x14 () Sll_t)
+
+(declare-func nil () Sll_t)
+
+;distinct : a syntactic sugar
+;distinct(x y) = (not (= x y))
+
+;Field names
+(declare-func next (Sll_t) Subrecord)
+
+;Records
+(declare-func ref (Subrecord) Record)
+
+; Maps
+
+(declare-func emp () Map)
+
+; x |-> y
+(declare-part pto (Sll_t Record) Map)
+
+; 0 |-> y is bottom
+(assert (forall ((y Record))
+  (not (pto nil y))))
+
+; ssep is sseparating conjunction
+(declare-part ssep (Map Map) Map)
+;Question: how to let ssep have arbitary number of arguments
+
+; commutativity
+(assert (forall ((h1 Map) (h2 Map))
+  (= (ssep h1 h2) (ssep h2 h1))))
+
+; associativity
+(assert (forall ((h1 Map) (h2 Map) (h3 Map))
+  (= (ssep (ssep h1 h2) h3)
+     (ssep h1 (ssep h2 h3)))))
+
+; identity
+(assert (forall ((h Map))
+  (= h (ssep h emp))))
+
+; x |-> y * x |-> z = bottom
+(assert (forall ((x Sll_t) (y Record) (z Record))
+  (not (ssep (pto x y) (pto x z)))))
+
+
+;List
+(declare-func ls (Sll_t Sll_t) Map)
+(assert (forall ((in Sll_t)(out Sll_t)) 
+ (= (ls in out) (or (= in out) (exists ((u Sll_t)) (and (not (= in out)) (ssep (pto in (ref (next u))) (ls u out)
+)))))
+))
+(assert
+  (and 
+    (= nil nil)
+    (not (floor  
+	(ssep
+		(ls  x2 x7) 
+	(ssep 		
+		(pto x6 (ref (next x1))) 
+	(ssep 		
+		(pto x4 (ref (next x9))) 
+	(ssep 		
+		(pto x3 (ref (next x2))) 
+	(ssep 		
+		(pto x8 (ref (next x4))) 
+	(ssep 		
+		(ls  x10 x2) 
+	(ssep 		
+		(pto x5 (ref (next x7))) 
+	(ssep 		
+		(pto x1 (ref (next x6))) 
+	(ssep 		
+		(pto x9 (ref (next x1))) 
+	(ssep 		
+		(ls  x7 x2) 
+		emp
+	)))))))))) ))
+  )
+)
+(assert
+  (not
+        (not (floor  
+	(ssep
+		(ls  x6 x1) 
+	(ssep 		
+		(ls  x10 x2) 
+	(ssep 		
+		(ls  x8 x4) 
+	(ssep 		
+		(ls  x3 x2) 
+	(ssep 		
+		(ls  x5 x7) 
+	(ssep 		
+		(ls  x4 x6) 
+	(ssep 		
+		(ls  x2 x7) 
+	(ssep 		
+		(ls  x7 x2) 
+		emp
+	)))))))) ))
+  ))
+
+\end{lstlisting}
+-----add explanation to this translation---
 \section{Semantics of K}
 
 Moved to a separate repository.
