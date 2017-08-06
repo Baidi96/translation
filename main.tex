@@ -1411,14 +1411,17 @@ where $T_{\mathrm{SL}_i}$ is the matching logic theory of $\mathrm{SL}_i$ and $t
 
 \subsubsection{Separation logic with symbolic heaps}
 In this section we focus on separation logic with symbolic heaps, the separation logic variant first introduced in 2005 by Josh Berdine, Cristiano Calcagno and Peter W. O'Hearn. It is also the main focus of the SL-COMP 2014 chaired by David R. Cok. 
-This variant describes $states$ consisting of a $stack$ and a $heap$. A $stack$ is a function mapping reference variables to non-addressable values and locations, which are disjoint sets. A $heap$ is a partial function mapping locations to $records$. The $records$ are defined by the user as a set of fields typed as reference or data. The domain of the $heap$ H$ is denoted by $ldom(H)$. $nil$ is interpreted to a location $S(nil) \notin ldom(H)$. Two $heaps$ are disjoint if their domains do not overlap.
+This variant describes $states$ consisting of a $stack$ and a $heap$. A $stack$ is a function mapping reference variables to non-addressable values and locations, which are disjoint sets. A $heap$ is a partial function mapping locations to $records$. The $records$ are defined by the user as a set of fields typed as reference or data. The domain of the $heap$ $H$ is denoted by $ldom(H)$. $nil$ is interpreted to a location $S(nil) \notin ldom(H)$. Two $heaps$ are disjoint if their domains do not overlap.
 \begin{equation*}
 Heaps \buildrel \text{d{}ef}\over= Loc \rightharpoonup (Fields \to Val\cup Loc)
 \end{equation*}
 \begin{equation*}
 Stacks \buildrel \text{d{}ef}\over= Var \to Val \cup Loc
 \end{equation*}
-The syntax of formulas of this variant is given by the following grammar.
+The syntax of formulas of this variant is given by the following grammar.\\
+\emph{f} \in \mathbb{F} \ \text{field\ names} \quad \quad \emph{P} \in \mathbb{P} \ \text{recursive \ definition \ name}\\
+\emph{x,y} \in \emph{Vars} \ \text{reference\ program\ vars}\qquad \emph{X,Y} \in \emph{LVars} \ \text{reference\ logical\ vars}\\
+
 
 \section{Semantics of K}
 
