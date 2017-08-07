@@ -1439,12 +1439,13 @@ The logic allows to prove judgments of the form $(S,H)$ $\vDash$ $P$, where $S$ 
     &(S,H) \models P(\text{E}) \ \text{iff} \ (S,H) \in  \mathbb{[P]}(P(E))&&\\
     &(S,H) \models \exists X.\phi \ \text{iff} \ \text{there exists} \  l \in Loc \ \text{s.t.}  (S[X \gets l], H) \models \varphi&&
 \end{flalign*}
-The benchmarks of SL-COMP use inductive definitions and the general syntax and examples can be referred to the report on SL-COMP.\\
+The benchmarks of SL-COMP use inductive definitions and the general syntax and examples can be referred from the report on SL-COMP.\\
 The reason why separation logic with symbolic heaps is an instance of matching logic is that we can build a separation logic theory of this variant.\\
 $T_{\mathrm{SL}}$\ = \ \{\ S\ ,\ $\Sigma$\ ,\ A \}\\
 S\ = \ \{Sll\_t\ ,\ Subrecord\ , \ Record\ , \ Map \} \\
 $\Sigma$\ = \ \{nil\ ,\ emp\ ,\ ref\ , \ pto\ , \ ssep\ , \ sref\ , \ ls \ , \ all field names\}\\
 $\text{A}\ = \ \{\text{nil} \mapsto \text{y} = \bot\ , \text{ssep\ (*) is comm+assoc}\ , \ x \mapsto y * x \mapsto z = \bot \ ,\text{ls(in out) = (in = out) }\vee \text{(} \exists \text{u (in} \ne \text{out} \wedge \text{in} \mapsto \text{ref(u) * ls(u out))}\}$ \\
+In $S$ we have 4 sorts: $Sll\_t$ is the sort of constants. A $Subrecord$ is the combination of a field name and a variable. A $Record$ is the combination of a symbol $ref$ and a $Subrecord$. A $Map$ is the transformation result by symbol $pto$ from a combination of a $Sll\_t$ and a $Record$.In $\Sigma$, $nil$ is a program variable representing an undefined reference. $emp$ means an empty heap. $ref$ and $pto$ have been explained above. $ssep$ is the separating conjunction operator. $sref$ combines several $Records$ together, it is used when a $Sll\_t$ is defined to have several fields. $ls$ means list, the features of which can be seen in $A$. We define all the field names to be symbols. They take a variable as input and form a $Subrecord$.\\
 ----add explanation (and proof? ) to S Sigma and A-----\\
 Here we show an example of translation from the benchmark of SL-COMP to matching logic.\\
 Separation logic example:\\
