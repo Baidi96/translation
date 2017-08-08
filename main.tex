@@ -1427,7 +1427,7 @@ $\rho$ \Coloneqq \{(\emph{f},\emph{E})\}\ |\ \{(\emph{f},\emph{D})\} \ |\ $\rho$
 $\Pi$ \Coloneqq \emph{E}=\emph{F}\ |\ \emph{E}\ne\emph{F} \ |\ $\Pi$ \wedge \ $\Pi$ \qquad\qquad \ \ \text{pure formulas}\\
 $\Sigma$ \Coloneqq \emph{emp}\ |\ \emph{junk}\ |\ \emph{E} \mapsto $\rho$\ \mid \emph(P(E,D)) \mid\ $\Sigma$ *$\Sigma$    \ \text{spatial formulas}\\
 \emph{A,B} $\overset{\Delta}{=}$\ \exists \emph{X},\emph{D}.\ $\Pi$ \wedge \ $\Sigma$ \ \wedge \ $\Delta$\ \qquad\qquad\qquad\quad \text{formulas}\\
-$\mathbb{F}$ is the set of field names, which is defined using the $\mathtt{Field}$ sort in the theory. Each field is declared as a function symbol of arity 0 and result type $\mathtt{Field\ A\ B}$. $\mathtt{A}$ is the sort corresponding to the record type declaring the field and $\mathtt{B}$ is the sort typing the field. The following is an example of binary tree data structure.
+$\mathbb{F}$ is the set of field names, which is defined using the $\mathtt{Field}$ sort in the theory. Each field is declared as a function symbol of arity 0 and result type $\mathtt{Field\ A\ B}$. $\mathtt{A}$ is the sort corresponding to the record type declaring the field and $\mathtt{B}$ is the sort typing the field. The following is an example of binary tree node.
 \begin{verbatim}
   typedef struct btree_s {
   struct btree_s* lson;
@@ -1457,14 +1457,14 @@ The logic allows to prove judgments of the form $(S,H)$ $\vDash$ $P$, where $S$ 
 \end{flalign*}
 The benchmarks of SL-COMP use inductive definitions and the general syntax and examples can be referred from the report on SL-COMP.\\
 The reason why separation logic with symbolic heaps is an instance of matching logic is that we can build a separation logic theory of this variant.\\
-$T_{\mathrm{SL}}$\ = \ \{\ S\ ,\ $\Sigma$\ ,\ A \}\\
-S\ = \ \{Sll\_t\ ,\ Subrecord\ , \ Record\ , \ Map \} \\
-$\Sigma$\ = \ \{nil\ ,\ emp\ ,\ ref\ , \ pto\ , \ ssep\ , \ sref\ , \ ls \ , \ all field names\}\\
-$\text{A}\ = \ \{\text{nil} \mapsto \text{y} = \bot\ , \text{ssep\ (*) is comm+assoc}\ , \ x \mapsto y * x \mapsto z = \bot \ ,\text{ls(in out) = (in = out) }\vee \text{(} \exists \text{u (in} \ne \text{out} \wedge \text{in} \mapsto \text{ref(u) * ls(u out))}\}$ \\
-In $S$ we have 4 sorts: $Sll\_t$ is the sort of constants. A $Subrecord$ is the combination of a field name and a variable. A $Record$ is the combination of a symbol $ref$ and a $Subrecord$. A $Map$ is the transformation result by symbol $pto$ from a combination of a $Sll\_t$ and a $Record$.In $\Sigma$, $nil$ is a program variable representing an undefined reference. $emp$ means an empty heap. $ref$ and $pto$ have been explained above. $ssep$ is the separating conjunction operator. $sref$ combines several $Records$ together, it is used when a $Sll\_t$ is defined to have several fields. $ls$ means list, the features of which can be seen in $A$. We define all the field names to be symbols. They take a variable as input and form a $Subrecord$.\\
+$T_{\mathrm{SL}}$\ = \ \{\ $\mathtt{S}$\ ,\ $\mathtt{\Sigma}$\ ,\ $\mathtt{A}$ \}\\
+$\mathtt{S}$\ = \ \{$\mathtt{Sll\_t}$\ ,\ $\mathtt{Subrecord}$\ , \ $\mathtt{Record}$\ ,\ $\mathtt{Records}$\ , \ $\mathtt{Map}$ \} \\
+$\mathtt{\Sigma}$\ = \ \{$\mathtt{nil}$\ ,\ $\mathtt{emp}$\ ,\ $\mathtt{ref}$\ , \ $\mathtt{pto}$\ , \ $\mathtt{ssep}$\ , \ $\mathtt{sref}$\ , \ $\mathtt{ls}$ \ , \ all field names\}\\
+$\mathtt{A} =  \{\mathtt{nil} \mapsto \text{y} = \bot\ , \mathtt{ssep\ (*)}\text{\ is comm+assoc}\ , \ x \mapsto y\ *\ x \mapsto z = \bot \ ,\mathtt{ls} \text{(in out)} = \text{(in = out)}\vee \text{(} \exists \text{u (in} \ne \text{out} \wedge \text{in} \mapsto \mathtt{ref}\text{(u) *}\mathtt{ls} \text{(u out))}\}$ \\
+In $S$ we have 5 sorts: $Sll\_t$ is the sort of constants. A $Subrecord$ is the combination of a field name and a variable. A $Record$ is the combination of a symbol $ref$ and a $Subrecord$. A $Map$ is the transformation result by symbol $pto$ from a combination of a $Sll\_t$ and a $Record$.In $\Sigma$, $nil$ is a program variable representing an undefined reference. $emp$ means an empty heap. $ref$ and $pto$ have been explained above. $ssep$ is the separating conjunction operator. $sref$ combines several $Records$ together, it is used when a $Sll\_t$ is defined to have several fields. $ls$ means list, the features of which can be seen in $A$. We define all the field names to be symbols. They take a variable as input and form a $Subrecord$.\\
 ----add explanation (and proof? ) to S Sigma and A-----\\
 Here we show an example of translation from the benchmark of SL-COMP to matching logic.\\
-Separation logic example:\\
+Separation logic example:
 \begin{verbatim}
 (declare-sort Sll_t 0)
 (declare-fun next () (Field Sll_t Sll_t))
@@ -1526,7 +1526,7 @@ Separation logic example:\\
 (check-sat)
 
 \end{verbatim}
-Then we show the matching logic example below.It shall be noted that proving assertion $P$ is equivalent to establishing $not(floor P)$ is unsat.\\
+Then we show the matching logic example below.It shall be noted that proving assertion $P$ is equivalent to establishing $not(floor P)$ is unsat.
 \begin{verbatim}
 (declare-sort Sll_t)
 (declare-sort Subrecord)
