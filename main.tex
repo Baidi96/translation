@@ -1411,12 +1411,12 @@ where $T_{\mathrm{SL}_i}$ is the matching logic theory of $\mathrm{SL}_i$ and $t
 
 \subsubsection{Separation logic with symbolic heaps}
 In this section we focus on separation logic with symbolic heaps, the separation logic variant first introduced in 2005 by Josh Berdine, Cristiano Calcagno and Peter W. O'Hearn. It is also the main focus of the SL-COMP 2014 chaired by David R. Cok. 
-This variant describes $states$ consisting of a $stack$ and a $heap$. A $stack$ is a function mapping reference variables to non-addressable values and locations, which are disjoint sets. A $heap$ is a partial function mapping locations to $records$. The $records$ are defined by the user as a set of fields typed as reference or data. The domain of the $heap$ $H$ is denoted by $ldom(H)$. $nil$ is interpreted to a location $S(nil) \notin ldom(H)$. Two $heaps$ are disjoint if their domains do not overlap.
+This variant describes $\mathtt{states}$ consisting of a $\mathtt{stack}$ and a $\mathtt{heap}$. A $\mathtt{stack}$ is a function mapping reference variables to non-addressable values and locations, which are disjoint sets. A $\mathtt{heap}$ is a partial function mapping locations to $\mathtt{records}$. The $\mathtt{records}$ are defined by the user as a set of fields typed as reference or data. The domain of the $\mathtt{heap\ H}$ is denoted by $\mathtt{ldom(H)}$. $\mathtt{nil}$ is interpreted to a location $\mathtt{S(nil) \notin\ ldom(H)}$. Two $\mathtt{heaps}$ are disjoint if their domains do not overlap.
 \begin{equation*}
-Heaps \buildrel \text{d{}ef}\over= Loc \rightharpoonup (Fields \to Val\cup Loc)
-\end{equation*}
-\begin{equation*}
-Stacks \buildrel \text{d{}ef}\over= Var \to Val \cup Loc
+\begin{split}
+& \mathrm{Heaps \buildrel \text{d{}ef}\over= Loc \rightharpoonup (Fields \to Val\cup Loc)} \\
+& \mathrm{Stacks \buildrel \text{d{}ef}\over= Var \to Val \cup Loc}
+\end{split}
 \end{equation*}
 The syntax of formulas of this variant is given by the following grammar.\\
 \emph{f} \in \mathbb{F} \ \text{field\ names} \quad \qquad \qquad \qquad \quad \ \ \emph{P} \in \mathbb{P} \ \text{recursive definition name}\\
@@ -1427,17 +1427,33 @@ $\rho$ \Coloneqq \{(\emph{f},\emph{E})\}\ |\ \{(\emph{f},\emph{D})\} \ |\ $\rho$
 $\Pi$ \Coloneqq \emph{E}=\emph{F}\ |\ \emph{E}\ne\emph{F} \ |\ $\Pi$ \wedge \ $\Pi$ \qquad\qquad \ \ \text{pure formulas}\\
 $\Sigma$ \Coloneqq \emph{emp}\ |\ \emph{junk}\ |\ \emph{E} \mapsto $\rho$\ \mid \emph(P(E,D)) \mid\ $\Sigma$ *$\Sigma$    \ \text{spatial formulas}\\
 \emph{A,B} $\overset{\Delta}{=}$\ \exists \emph{X},\emph{D}.\ $\Pi$ \wedge \ $\Sigma$ \ \wedge \ $\Delta$\ \qquad\qquad\qquad\quad \text{formulas}\\
-The logic allows to prove judgments of the form $(S,H)$ $\vDash$ $P$, where $S$ is a stack, $H$ is a heap, and $P$ is an assertion over the given stack and heap. The semantics are given as follows:
+$\mathbb{F}$ is the set of field names, which is defined using the $\mathtt{Field}$ sort in the theory. Each field is declared as a function symbol of arity 0 and result type $\mathtt{Field\ A\ B}$. $\mathtt{A}$ is the sort corresponding to the record type declaring the field and $\mathtt{B}$ is the sort typing the field. The following is an example of binary tree data structure.
+\begin{verbatim}
+  typedef struct btree_s {
+  struct btree_s* lson;
+  struct btree_s* rson;
+  int data;
+  }* btree_t;
+  
+  (declare-fun lson () (Field Btree_t Btree_t))
+  (declare-fun rson () (Field Btree_t Btree_t))
+  (declare-fun data () (Field Btree_t Int))
+\end{verbatim}
+Record values are denoted by mappings of record fields to locations stored in variables. The following is an example value for a record defining a binary tree node.
+\begin{verbatim}
+ {(lson, x), (rson, y),(data, z)}
+\end{verbatim}
+The logic allows to prove judgments of the form $(S,H)$ $\vDash$ $P$, where $S$ is a $\mathtt{stack}$, $H$ is a $\mathtt{heap}$, and $P$ is an assertion over the given $\mathtt{stack}$ and $\mathtt{heap}$. The semantics are given as follows:
 \begin{flalign*}
    & (S,H) \models E = F  \ \text{iff} \  S(E) = S(F)&&\\
    & (S,H) \models E \neq F \ \text{iff} \  S(E) \neq S(F)&&\\
-   & (S,H) \models \varphi \wedge \psi \ \text{iff} \ (S,H) \models \phi \ \text{and} \ (S,H) \models \psi&&\\
-    &(S,H) \models emp \ \text{iff} \ dom(H) = \emptyset&&\\
-    &(S,H) \models junk  \qquad  \text{always}&&\\
-    &(S,H) \models E \mapsto \{p\} \ \text{iff} \ dom(H) = \{(S(E),f_i) \mid (f_i,E_i) \in \{p\}\} &&\\ &\text{and for every} \ (f_i,E_i) \in \{p\} , \ H(S(E),f_i) = S(E_i) &&\\
+   & (S,H) \models \varphi \wedge \psi \ \ \text{iff} \ (S,H) \models \phi \ \text{and} \ (S,H) \models \psi&&\\
+    &(S,H) \models emp \ \quad \text{iff} \ dom(H) = \emptyset&&\\
+    &(S,H) \models junk  \quad  \text{always}&&\\
+    &(S,H) \models E \mapsto \{p\} \ \text{iff} \ dom(H) = \{(S(E),f_i) \mid (f_i,E_i) \in \{p\}\} &&\\ & \qquad\qquad\qquad\quad \ \text{and for every} \ (f_i,E_i) \in \{p\} , \ H(S(E),f_i) = S(E_i) &&\\
     &(S,H) \models \Sigma_1 \ast \Sigma_2 \ \text{iff} \  \exists H_1 , \ H_2 \ \text{s.t} \ ldom(H_1) \uplus ldom(H_2),(S,H_1) \models \Sigma_1, \ \text{and} \ (S,H_2) \models \Sigma_2&&\\
-    &(S,H) \models P(\text{E}) \ \text{iff} \ (S,H) \in  \mathbb{[P]}(P(E))&&\\
-    &(S,H) \models \exists X.\phi \ \text{iff} \ \text{there exists} \  l \in Loc \ \text{s.t.}  (S[X \gets l], H) \models \varphi&&
+    &(S,H) \models P(\text{E}) \ \quad \text{iff} \ (S,H) \in  \mathbb{[P]}(P(E))&&\\
+    &(S,H) \models \exists X.\phi \ \quad\text{iff} \ \text{there exists} \  l \in Loc \ \text{s.t.}  (S[X \gets l], H) \models \varphi&&
 \end{flalign*}
 The benchmarks of SL-COMP use inductive definitions and the general syntax and examples can be referred from the report on SL-COMP.\\
 The reason why separation logic with symbolic heaps is an instance of matching logic is that we can build a separation logic theory of this variant.\\
@@ -1449,7 +1465,7 @@ In $S$ we have 4 sorts: $Sll\_t$ is the sort of constants. A $Subrecord$ is the 
 ----add explanation (and proof? ) to S Sigma and A-----\\
 Here we show an example of translation from the benchmark of SL-COMP to matching logic.\\
 Separation logic example:\\
-\begin{lstlisting}
+\begin{verbatim}
 (declare-sort Sll_t 0)
 (declare-fun next () (Field Sll_t Sll_t))
 (define-fun ls ((?in Sll_t) (?out Sll_t)) Space
@@ -1509,9 +1525,9 @@ Separation logic example:\\
   ))
 (check-sat)
 
-\end{lstlisting}
+\end{verbatim}
 Then we show the matching logic example below.It shall be noted that proving assertion $P$ is equivalent to establishing $not(floor P)$ is unsat.\\
-\begin{lstlisting}
+\begin{verbatim}
 (declare-sort Sll_t)
 (declare-sort Subrecord)
 (declare-sort Record)
@@ -1635,7 +1651,7 @@ Then we show the matching logic example below.It shall be noted that proving ass
 	)))))))) ))
   ))
 
-\end{lstlisting}
+\end{verbatim}
 -----add explanation to this translation---
 \section{Semantics of K}
 
