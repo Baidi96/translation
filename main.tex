@@ -1410,8 +1410,8 @@ where $T_{\mathrm{SL}_i}$ is the matching logic theory of $\mathrm{SL}_i$ and $t
 
 \subsubsection{Original separation logic}
 
-\subsubsection{Separation logic with symbolic heaps}
-In this section we focus on separation logic with symbolic heaps, the separation logic variant first introduced in 2005 by Josh Berdine, Cristiano Calcagno and Peter W. O'Hearn. It is also the main focus of the SL-COMP 2014 chaired by David R. Cok. 
+\subsubsection{Separation logic with recursive definitions}
+In this section we focus on separation logic with  recursive definitions, the separation logic variant first introduced in 2013 by Radu Iosif, Adam Rogalewicz, and Jirı Simácek. Its $symbolic\ heaps$ part was first introduced in 2005 by Josh Berdine, Cristiano Calcagno and Peter W. O'Hearn. It is also the main focus of the SL-COMP 2014 chaired by David R. Cok.\\ 
 This variant describes $\mathtt{states}$ consisting of a $\mathtt{stack}$ and a $\mathtt{heap}$. A $\mathtt{stack}$ is a function mapping reference variables to non-addressable values and locations, which are disjoint sets. A $\mathtt{heap}$ is a partial function mapping locations to $\mathtt{records}$. The $\mathtt{records}$ are defined by the user as a set of fields typed as reference or data. The domain of the $\mathtt{heap\ H}$ is denoted by $\mathtt{ldom(H)}$. $\mathtt{nil}$ is interpreted to a location $\mathtt{S(nil) \notin\ ldom(H)}$. Two $\mathtt{heaps}$ are disjoint if their domains do not overlap.
 \begin{equation*}
 \begin{split}
@@ -1419,7 +1419,7 @@ This variant describes $\mathtt{states}$ consisting of a $\mathtt{stack}$ and a 
 & \mathrm{Stacks \buildrel \text{d{}ef}\over= Var \to Val \cup Loc}
 \end{split}
 \end{equation*}
-The syntax of formulas of this variant is given by the following grammar.\\
+First let's look at the syntax of formulas of this variant.\\
 \begin{equation*}
 \begin{split}
 &\emph{f} \in \mathbb{F} \ \text{field\ names} \quad \qquad \qquad \qquad \quad \ \qquad  \emph{P} \in \mathbb{P} \ \text{recursive definition name}\\
@@ -1448,8 +1448,8 @@ $\mathtt{Records}$ values are denoted by mappings of record fields to locations 
 \begin{verbatim}
  {(lson, x), (rson, y),(data, z)}
 \end{verbatim}
-$\mathbb{P}$ is the set of recursive definitions defined by the syntax $P(\mathbf{E}\text{,}\mathbf{D}\text{)}\overset{\Delta}{=}\bigvee_{i}\ \exists X_i,D_i,\Pi_i\wedge \Sigma_i \wedge \Delta_i$ where the spatial formulas $\Sigma_i$ may call $P$ or other predicates from $\mathbb{P}$. In spatial formulas, $emp$ means empty $\mathtt{heap}$, and $junk$ is true for any $\mathtt{heap}$,whether empty or consisting of some allocated nodes. * is the separating conjunction symbol.\\ 　
-The logic allows to prove judgments of the form $(S,H)$ $\vDash$ $\varphi$, where $S$ is a $\mathtt{stack}$, $H$ is a $\mathtt{heap}$, and $\varphi$ is an assertion over the given $\mathtt{stack}$ and $\mathtt{heap}$. The semantics are given as follows:
+$\mathbb{P}$ is the set of recursive definitions defined by the syntax $P(\mathbf{E}\text{,}\mathbf{D}\text{)}\overset{\Delta}{=}\bigvee_{i}\ \exists X_i,D_i,\Pi_i\wedge \Sigma_i \wedge \Delta_i$ where the spatial formulas $\Sigma_i$ may call $P$ or other predicates from $\mathbb{P}$. In spatial formulas, $emp$ means empty $\mathtt{heap}$, while $junk$ is true for any $\mathtt{heap}$,whether empty or consisting of some allocated nodes. * is the separating conjunction symbol. What's more, note that we have pure formulas typed by the $\mathtt{Bool}$ sort and spatial formulas typed by the $\mathtt{Space}$ sort, the spatial atoms' combination with a pure formula requires to cast $\mathtt{Space}$ to $\mathtt{Bool}$ using the symbol $\mathtt{tobool}$. The example can be seen below.\\ 　
+After we have known the syntax of this variant, we then turn our attention to the semantics. The logic allows to prove judgments of the form $(S,H)$ $\vDash$ $\varphi$, where $S$ is a $\mathtt{stack}$, $H$ is a $\mathtt{heap}$, and $\varphi$ is an assertion over the given $\mathtt{stack}$ and $\mathtt{heap}$. The semantics are given as follows:
 \begin{equation*}
 \begin{split}
    & (S,H) \models E = F  \ \text{iff} \  S(E) = S(F)\\
@@ -1464,12 +1464,17 @@ The logic allows to prove judgments of the form $(S,H)$ $\vDash$ $\varphi$, wher
 \end{split}
 \end{equation*}
 In the above semantics, $\uplus$ denotes the disjoint union of sets. $ S[X\gets\mathit{l}]$ denotes the function $S'$ s.t. $S'(X) = l$ and $S'(Y)=S(Y)$ for any $Y \ne X$. Note that a configuration $(S,H)$ satisfies a predicate atom $P(\mathbf{E})$ if it belongs to the least fix point of the set of recursive definitions $\mathbb{P}$ for the actual parameters $\mathbf{E}$ of $P$. The set of models of a formula $\varphi$ is denoted by [$\varphi$]. Given two formulas $\varphi_1$ and $\varphi_2$, we have $\varphi_1 \Rightarrow \varphi_2$ iff $[\varphi_1] \subseteq [\varphi_2]$.\\
-The reason why separation logic with symbolic heaps is an instance of matching logic is that we can build a separation logic theory of this variant.\\
-$T_{\mathrm{SL}}$\ = \ \{\ $\mathtt{S}$\ ,\ $\mathtt{\Sigma}$\ ,\ $\mathtt{A}$ \}\\
-$\mathtt{S}$\ = \ \{$\mathtt{Sll\_t}$\ ,\ $\mathtt{Subrecord}$\ , \ $\mathtt{Record}$\ ,\ $\mathtt{Records}$\ , \ $\mathtt{Map}$ \} \\
-$\mathtt{\Sigma}$\ = \ \{$\mathtt{nil}$\ ,\ $\mathtt{emp}$\ ,\ $\mathtt{ref}$\ , \ $\mathtt{pto}$\ , \ $\mathtt{ssep}$\ , \ $\mathtt{sref}$\ , \ $\mathtt{ls}$ \ , \ all field names\}\\
-$\mathtt{A} =  \{\mathtt{nil} \mapsto y = \bot\ , \mathtt{ssep\ (*)}\text{\ is comm+assoc}\ , \ x \mapsto y\ *\ x \mapsto z = \bot \ ,\mathtt{ls} (in\ out) = (in = out)\vee \text{(} \exists u\ (in \ne out \wedge in \mapsto \mathtt{sref}(\mathtt{ref}\ f\ ,\ u)*\mathtt{ls} (u\ out))\}$ \\
-In $\mathtt{S}$ we have 5 sorts: $\mathtt{Sll\_t}$ is the sort of constants. A $\mathtt{Subrecord}$ is the combination of a field name and a variable. A $\mathtt{Record}$ is a field reference, which is the combination of a symbol $\mathtt{ref}$ and a $\mathtt{Subrecord}$. A $\mathtt{Records}$ is a set of field references. A $\mathtt{Map}$ is the mapping result by symbol $\mathtt{pto}$ from a $\mathtt{Sll\_t}$ to a $\mathtt{Records}$. In $\mathtt{\Sigma}$, $\mathtt{nil}$ is a program variable representing an undefined reference. $\mathtt{emp}$ means an empty heap. $\mathtt{ref}$ and $\mathtt{pto}$ have been explained above. $\mathtt{ssep}$ is the separating conjunction operator. $\mathtt{sref}$ combines several $\mathtt{Record}$ together to a $\mathtt{Records}$, it is used when a $\mathtt{Sll\_t}$ is defined to have several fields. $\mathtt{ls}$ means list, its definition can be seen in $\mathtt{A}$. We define all the field names to be symbols. They take a certain type variable as input and form a $\mathtt{Subrecord}$. The following is the example of binary tree node.
+Now we got the general idea of this separation logic variant. We will then focus on building a separation logic theory of this variant, in other words, to prove that this separation logic variant is an instance of matching logic. The theory $T_{\mathrm{SL}}$ consists of 3 parts: $S$ is the set of sorts, $\Sigma$ is the set of symbols, and $A$ is the set of axioms. In the following definition, $\mathit{H,H_1,H_2,H_3}$ are of sort $\mathit{Map}$. $\mathit{r,r_1,r_2}$ are of sort $\mathit{Records}$. $\mathit{x,y,z}$ are of sort $\mathit{Sll\_t}$.
+\begin{equation*}
+\begin{split}
+&T_{\mathrm{SL}}\ = \ \{\ S\ ,\ \Sigma\ ,\ A \}\\
+& S\ = \ \{\mathit{Sll\_t}\ ,\ \mathit{Subrecord}\ , \ \mathit{Record}\ ,\ \mathit{Records}\ , \ \mathit{Map} \} \\
+&\Sigma\ = \ \{\mathit{nil}\ ,\ \mathit{emp}\ ,\ \mapsto\ , \ \mathit{*}\ , \ \mathit{ref}\ , \ \mathit{sref}\ , \ \mathit{ls} \ , \ f\ \text{(all field names)}\}\\
+&A =  \{\ \_ \mapsto \_ :Sll\_t\times Records \rightharpoonup Map\quad \mathit{emp}*\mathit{H}=\mathit{H} \\ &\quad\quad\ \mathit{emp}:\to \mathit{Map}\qquad\qquad\qquad\quad\quad\ \ \ \mathit{H_1 * H_2 = H_2 * H_1}\\&\quad\quad\ \_*\_:\mathit{Map}\times\mathit{Map}\rightharpoonup Map\qquad\quad\  (H_1 * H_2) * H_3 = H_1 * (H_2 * H_3)\\&\quad\quad\ nil \mapsto r = \bot\qquad\qquad\qquad\quad\qquad x \mapsto r_1\ *\ x \mapsto r_2 = \bot
+\\&\qquad\ \mathit{ls} (x\ z) = (x = z)\vee \text{(} \exists y\ (x \ne z \wedge x \mapsto \mathit{sref}(\mathit{ref}\ f\ y)*\mathit{ls} (y\ z))\ \}
+\end{split}
+\end{equation*}
+In $S$ we have 5 sorts: $\mathit{Sll\_t}$ is the sort of constants. It can also be some others, we use $\mathit{Sll\_t}$ here just because the benchmarks of SL-COMP use it. A $\mathit{Subrecord}$ is the combination of a field name and a variable. A $\mathit{Record}$ is a field reference, which is the combination of a symbol $\mathit{ref}$ and a $\mathit{Subrecord}$. A $\mathit{Records}$ is a set of field references. A $\mathit{Map}$ is the mapping result by symbol $\mapsto$ from a $\mathit{Sll\_t}$ to a $\mathit{Records}$. In $\Sigma$, $\mathit{nil}$ is a program variable representing an undefined reference. $\mathit{emp}$ means an empty heap. $\mathit{ref}$ and $\mapsto$ have been explained above. $*$ is the separating conjunction operator. $\mathit{sref}$ combines several $\mathit{Record}$ together to a $\mathit{Records}$, it is useful when a $\mathit{Sll\_t}$ is defined to have several fields. $\mathit{ls}$ means list, its definition can be seen in $A$. We define all the field names to be symbols. They take a certain type variable as input and form a $\mathit{Subrecord}$. The following is an example of the sorts used when defining a binary tree node.
 \begin{verbatim}
   Sll_t    : t
   Subrecord: (lson x), (rson y),(data z)
@@ -1477,8 +1482,14 @@ In $\mathtt{S}$ we have 5 sorts: $\mathtt{Sll\_t}$ is the sort of constants. A $
   Records  : {sref (ref lson x), (ref rson y), (ref data z)}
   Map      : t |-> {sref (ref lson x), (ref rson y), (ref data z)}   
 \end{verbatim}
----------add  proof ? to \{ S $\Sigma$ A \}------------\\
-Here we show an example of translation from the benchmark of SL-COMP to matching logic. In the following separation logic example, $\mathtt{next}$ is a field name with record type $\mathtt{Sll\_t}$ and field type $\mathtt{Sll\_t}$. The formulas\\ $(\mathtt{nil}\ =\ \mathtt{nil}) \wedge ((\mathtt{ls}\ x2\ x7) * (x6 \mapsto (\mathtt{next},x1)) * (x4 \mapsto (\mathtt{next},x9)) * (x3 \mapsto (\mathtt{next},x2)) * (x8 \mapsto (\mathtt{next},x4)) * (\mathtt{ls}\ x10\ x2) *\mathtt{emp})$\ \ \  and\\  $\neg((\mathtt{ls}\ x6\ x1) *(\mathtt{ls}\ x10\ x2) *\mathtt{emp})$ are asserted.
+---------add  details of \{ S $\Sigma$ A \}------------\\
+Next, we show an example of translation from the benchmark of SL-COMP to matching logic. In the following separation logic example, $\mathit{next}$ is a field name with record type $\mathit{Sll\_t}$ and field type $\mathit{Sll\_t}$. $x_1$ - $x_{10}$ are constants of sort $\mathit{Sll\_t}$. The following formulas are asserted:
+\begin{equation*}
+\begin{split}
+&(\mathit{nil} = \mathit{nil}) \wedge ((\mathit{ls}\ x_2\ x_7) * (x_6 \mapsto (\mathit{next},x_1)) * (x_4 \mapsto (\mathit{next},x_9)) *\mathit{emp}) \\  &\neg((\mathit{ls}\ x_6\ x_1) *(\mathit{ls}\ x_{10}\ x_2) *\mathit{emp})
+\end{split}
+\end{equation*}
+The following is the example encoded in the separation logic theory in SMT\_LIB. 
 \begin{verbatim}
 (declare-sort Sll_t 0)
 (declare-fun next () (Field Sll_t Sll_t))
@@ -1500,29 +1511,24 @@ Here we show an example of translation from the benchmark of SL-COMP to matching
 (declare-fun x9 () Sll_t)
 (declare-fun x10 () Sll_t)
 (assert
-  (and 
-    (= nil nil)
-    (tobool 
-	(ssep
-		(ls  x2 x7) 
-		(pto x6 (ref next x1)) 
-		(pto x4 (ref next x9)) 
-		(pto x3 (ref next x2)) 
-		(pto x8 (ref next x4)) 
-		(ls  x10 x2) 
-		emp
-	) )
-  )
-)
+  (and (= nil nil)
+       (tobool 
+       (ssep
+		            (ls  x2 x7) 
+		            (pto x6 (ref next x1)) 
+		            (pto x4 (ref next x9)) 
+		            emp)
+	   )  
+))
 (assert
   (not
-        (tobool 
-	(ssep
-		(ls  x6 x1) 
-		(ls  x10 x2) 
-		emp
-	) )
-  ))
+    (tobool 
+	    (ssep
+       		(ls  x6 x1) 
+       		(ls  x10 x2) 
+       		emp
+	))
+))
 (check-sat)
 
 \end{verbatim}
@@ -1602,30 +1608,24 @@ The following is the matching logic version of the above example. It shall be no
   (and 
     (= nil nil)
     (not (floor  
-	(ssep
-		(ls  x2 x7) 
-	(ssep 		
-		(pto x6 (sref (ref (next x1)))) 
-	(ssep 		
-		(pto x4 (sref (ref (next x9)))) 
-	(ssep 		
-		(pto x3 (sref (ref (next x2)))) 
-	(ssep 		
-		(pto x8 (sref (ref (next x4))))
-	(ssep 		
-		(ls  x10 x2) 
-		emp
-	))))))))
-  )
+       	(ssep
+	       	(ls  x2 x7) 
+       	(ssep 		
+	       	(pto x6 (sref (ref (next x1)))) 
+       	(ssep 		
+	       	(pto x4 (sref (ref (next x9)))) 
+	       	(ls  x10 x2) 
+	       	emp)
+	)))))
 )
 (assert
   (not
-        (not (floor  
-	(ssep
-		(ls  x6 x1) 
-	(ssep 		
-		(ls  x10 x2) 
-		emp
+    (not (floor  
+       	(ssep
+	       	(ls  x6 x1) 
+       	(ssep 		
+	       	(ls  x10 x2) 
+	       	emp
 	)))))
 )
 \end{verbatim}
