@@ -12,6 +12,7 @@
 \usepackage{comment}
 \usepackage[]{algorithm2e}
 \usepackage{comment}
+\usepackage{mathrsfs}
 
 % Import packages for syntax highlight code.
 \usepackage{listings}
@@ -1419,14 +1420,18 @@ This variant describes $\mathtt{states}$ consisting of a $\mathtt{stack}$ and a 
 \end{split}
 \end{equation*}
 The syntax of formulas of this variant is given by the following grammar.\\
-\emph{f} \in \mathbb{F} \ \text{field\ names} \quad \qquad \qquad \qquad \quad \ \ \emph{P} \in \mathbb{P} \ \text{recursive definition name}\\
-\emph{x,y} \in \emph{Vars} \ \text{reference\ program\ vars}\qquad \emph{X,Y} \in \emph{LVars} \ \text{reference\ logical\ vars}\\
-\emph{d,D} \in \emph{DVars} \ \text{data\ variables}\qquad \qquad \quad $\Delta$ \ \text{data\ constraints}\\
-\emph{E,F} \Coloneqq \emph{x}\ |\ \emph{X}\qquad \qquad\qquad\qquad\qquad\quad \text{reference\ variables}\\
-$\rho$ \Coloneqq \{(\emph{f},\emph{E})\}\ |\ \{(\emph{f},\emph{D})\} \ |\ $\rho$\cup $\rho$ \qquad\qquad\quad\text{set of field references}\\
-$\Pi$ \Coloneqq \emph{E}=\emph{F}\ |\ \emph{E}\ne\emph{F} \ |\ $\Pi$ \wedge \ $\Pi$ \qquad\qquad \ \ \text{pure formulas}\\
-$\Sigma$ \Coloneqq \emph{emp}\ |\ \emph{junk}\ |\ \emph{E} \mapsto $\rho$\ \mid \emph(P(E,D)) \mid\ $\Sigma$ *$\Sigma$    \ \text{spatial formulas}\\
-\emph{A,B} $\overset{\Delta}{=}$\ \exists \emph{X},\emph{D}.\ $\Pi$ \wedge \ $\Sigma$ \ \wedge \ $\Delta$\ \qquad\qquad\qquad\quad \text{formulas}\\
+\begin{equation*}
+\begin{split}
+&\emph{f} \in \mathbb{F} \ \text{field\ names} \quad \qquad \qquad \qquad \quad \ \qquad  \emph{P} \in \mathbb{P} \ \text{recursive definition name}\\
+&\emph{x,y} \in \emph{Vars} \ \text{reference\ program\ vars}\qquad\quad\ \emph{X,Y} \in \emph{LVars} \ \text{reference\ logical\ vars}\\
+&\emph{d,D} \in \emph{DVars} \ \text{data\ variables}\qquad \qquad \quad\qquad\qquad\ \Delta \ \text{data\ constraints}\\
+&\emph{E,F} \Coloneqq \emph{x}\ |\ \emph{X}\qquad \qquad\qquad\qquad\qquad\quad\qquad\qquad\ \text{reference\ variables}\\
+&\rho \Coloneqq \{(\emph{f},\emph{E})\}\ |\ \{(\emph{f},\emph{D})\} \ |\ \rho\cup \rho \qquad\qquad\qquad\quad\qquad \text{set of field references}\\
+&\Pi \Coloneqq \emph{E}=\emph{F}\ |\ \emph{E}\ne\emph{F} \ |\ \Pi \wedge  \Pi \qquad\qquad\qquad \ \qquad\ \ \ \text{pure formulas}\\
+&\Sigma \Coloneqq \emph{emp}\ |\ \emph{junk}\ |\ \emph{E} \mapsto \rho\ \mid \emph(P(E,D)) \mid\ \Sigma *\Sigma \  \qquad \ \text{spatial formulas}\\
+&\emph{A,B} \overset{\Delta}{=}\ \exists \emph{X},\emph{D}.\ \Pi \wedge  \Sigma  \wedge  \Delta\ \qquad\qquad\qquad\quad\ \ \ \qquad\ \text{formulas}\\
+\end{split}
+\end{equation*}
 $\mathbb{F}$ is the set of field names, which is defined using the $\mathtt{Field}$ sort in the theory. Each field is declared as a function symbol of arity 0 and result type $\mathtt{Field\ A\ B}$. $\mathtt{A}$ is the sort corresponding to the record type declaring the field and $\mathtt{B}$ is the sort typing the field. The following is an example of binary tree node.
 \begin{verbatim}
   typedef struct btree_s {
@@ -1439,23 +1444,26 @@ $\mathbb{F}$ is the set of field names, which is defined using the $\mathtt{Fiel
   (declare-fun rson () (Field Btree_t Btree_t))
   (declare-fun data () (Field Btree_t Int))
 \end{verbatim}
-Record values are denoted by mappings of record fields to locations stored in variables. The following is an example value for a record defining a binary tree node.
+$\mathtt{Records}$ values are denoted by mappings of record fields to locations stored in variables. The following is an example value for a record defining a binary tree node.
 \begin{verbatim}
  {(lson, x), (rson, y),(data, z)}
 \end{verbatim}
-The logic allows to prove judgments of the form $(S,H)$ $\vDash$ $P$, where $S$ is a $\mathtt{stack}$, $H$ is a $\mathtt{heap}$, and $P$ is an assertion over the given $\mathtt{stack}$ and $\mathtt{heap}$. The semantics are given as follows:
-\begin{flalign*}
-   & (S,H) \models E = F  \ \text{iff} \  S(E) = S(F)&&\\
-   & (S,H) \models E \neq F \ \text{iff} \  S(E) \neq S(F)&&\\
-   & (S,H) \models \varphi \wedge \psi \ \ \text{iff} \ (S,H) \models \phi \ \text{and} \ (S,H) \models \psi&&\\
-    &(S,H) \models emp \ \quad \text{iff} \ dom(H) = \emptyset&&\\
-    &(S,H) \models junk  \quad  \text{always}&&\\
-    &(S,H) \models E \mapsto \{p\} \ \text{iff} \ dom(H) = \{(S(E),f_i) \mid (f_i,E_i) \in \{p\}\} &&\\ & \qquad\qquad\qquad\quad \ \text{and for every} \ (f_i,E_i) \in \{p\} , \ H(S(E),f_i) = S(E_i) &&\\
-    &(S,H) \models \Sigma_1 \ast \Sigma_2 \ \text{iff} \  \exists H_1 , \ H_2 \ \text{s.t} \ ldom(H_1) \uplus ldom(H_2),(S,H_1) \models \Sigma_1, \ \text{and} \ (S,H_2) \models \Sigma_2&&\\
-    &(S,H) \models P(\text{E}) \ \quad \text{iff} \ (S,H) \in  \mathbb{[P]}(P(E))&&\\
-    &(S,H) \models \exists X.\phi \ \quad\text{iff} \ \text{there exists} \  l \in Loc \ \text{s.t.}  (S[X \gets l], H) \models \varphi&&
-\end{flalign*}
-The benchmarks of SL-COMP use inductive definitions and the general syntax and examples have no big differences from those shown above. They can be referred from the report on SL-COMP.\\
+$\mathbb{P}$ is the set of recursive definitions defined by the syntax $P(\mathbf{E}\text{,}\mathbf{D}\text{)}\overset{\Delta}{=}\bigvee_{i}\ \exists X_i,D_i,\Pi_i\wedge \Sigma_i \wedge \Delta_i$ where the spatial formulas $\Sigma_i$ may call $P$ or other predicates from $\mathbb{P}$. In spatial formulas, $emp$ means empty $\mathtt{heap}$, and $junk$ is true for any $\mathtt{heap}$,whether empty or consisting of some allocated nodes. * is the separating conjunction symbol.\\ 　
+The logic allows to prove judgments of the form $(S,H)$ $\vDash$ $\varphi$, where $S$ is a $\mathtt{stack}$, $H$ is a $\mathtt{heap}$, and $\varphi$ is an assertion over the given $\mathtt{stack}$ and $\mathtt{heap}$. The semantics are given as follows:
+\begin{equation*}
+\begin{split}
+   & (S,H) \models E = F  \ \text{iff} \  S(E) = S(F)\\
+   & (S,H) \models E \neq F \ \text{iff} \  S(E) \neq S(F)\\
+   & (S,H) \models \varphi \wedge \psi \ \ \text{iff} \ (S,H) \models \phi \ \text{and} \ (S,H) \models \psi\\
+    &(S,H) \models emp \ \quad \text{iff} \ dom(H) = \emptyset\\
+    &(S,H) \models junk  \quad  \text{always}\\
+    &(S,H) \models E \mapsto \{p\} \ \text{iff} \ dom(H) = \{(S(E),f_i) \mid (f_i,E_i) \in \{p\}\} \\ & \qquad\qquad\qquad\quad \ \ \text{and for every} \ (f_i,E_i) \in \{p\} , \ H(S(E),f_i) = S(E_i) \\
+    &(S,H) \models \Sigma_1 \ast \Sigma_2 \ \text{iff} \  \exists H_1 , \ H_2 \ \text{s.t.} \ ldom(H)=ldom(H_1) \uplus ldom(H_2),\\ & \qquad\qquad\qquad\quad(S,H_1) \models \Sigma_1, \ \text{and} \ (S,H_2) \models \Sigma_2\\
+    &(S,H) \models P(\mathbf{E}) \ \quad \text{iff} \ (S,H) \in  \mathbb{[}\mathbb{P]}(P(\mathbf{E}))\\
+    &(S,H) \models \exists X.\varphi \ \quad\text{iff} \ \text{there exists} \  \mathit{l} \in Loc \ \text{s.t.}  (S[X \gets \mathit{l}], H) \models \varphi
+\end{split}
+\end{equation*}
+In the above semantics, $\uplus$ denotes the disjoint union of sets. $ S[X\gets\mathit{l}]$ denotes the function $S'$ s.t. $S'(X) = l$ and $S'(Y)=S(Y)$ for any $Y \ne X$. Note that a configuration $(S,H)$ satisfies a predicate atom $P(\mathbf{E})$ if it belongs to the least fix point of the set of recursive definitions $\mathbb{P}$ for the actual parameters $\mathbf{E}$ of $P$. The set of models of a formula $\varphi$ is denoted by [$\varphi$]. Given two formulas $\varphi_1$ and $\varphi_2$, we have $\varphi_1 \Rightarrow \varphi_2$ iff $[\varphi_1] \subseteq [\varphi_2]$.\\
 The reason why separation logic with symbolic heaps is an instance of matching logic is that we can build a separation logic theory of this variant.\\
 $T_{\mathrm{SL}}$\ = \ \{\ $\mathtt{S}$\ ,\ $\mathtt{\Sigma}$\ ,\ $\mathtt{A}$ \}\\
 $\mathtt{S}$\ = \ \{$\mathtt{Sll\_t}$\ ,\ $\mathtt{Subrecord}$\ , \ $\mathtt{Record}$\ ,\ $\mathtt{Records}$\ , \ $\mathtt{Map}$ \} \\
