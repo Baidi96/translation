@@ -1,10 +1,10 @@
 syntax Bool ::= true 
 syntax Bool ::= false
 syntax Map ::= merge(Bool,Bool,Bool)
-axiom E':Pattern
-axiom \and(X:Bool,\equals(X:Bool,false()))
-axiom \and(\equals(Y:Bool,true()),Y:Bool)
-axiom merge(X:Map,Y:Map,Z:Map)
-axiom \exists(X:Bool,\equals(X:Bool,false()))
-axiom \not(X:Bool)
-axiom THIS IS NOT PATTERN
+	axiom E':Pattern
+	axiom \and(X:Bool, \equals(X:Bool, false()))
+	axiom \and(\equals(Y:Bool, true()), Y:Bool)
+	axiom merge(X:Map, Y:Map, Z:Map)
+	axiom \exists(X:Bool, \equals(X:Bool, false()))
+	axiom \not(X:Bool)
+	axiom THIS IS NOT PATTERN

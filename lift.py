@@ -84,16 +84,23 @@ dict = {}
 dict["\equals"] = "Bool,Bool"
 for line in file_object:
 	if line.count("syntax") > 0 :
-		print line[7:len(line)]
-		group = (re.search("(.*)::= ([a-zA-Z]\w*\'?\(?.*\)?)", \
-			    line[7:len(line)]).group(2))
-		key = (re.search("([a-zA-Z ]\w*\'?)\)?(.*)\)?",group).group(1))
-		value = (re.search("([a-zA-Z ]\w*\'?)\)?(.*)\)?",group).group(2))
+		line = line.replace("syntax ","")
+		line = line.replace(" ","")
+		line = line.replace("	","")
+		print line
+		group = (re.search("(.*)::=([a-zA-Z]\w*\'?\(?.*\)?)", \
+			    line).group(2))
+		key = (re.search("([a-zA-Z]\w*\'?)\)?(.*)\)?",group).group(1))
+		value = (re.search("([a-zA-Z]\w*\'?)\)?(.*)\)?",group).group(2))
 		value = value[1:len(value)-1]
+		value = value.replace(" ","")
 		print key + " " + value
 		dict[key] = value
 	elif line.count("axiom") > 0 :
-		print line[6:len(line)]
-		print lift(line[6:len(line)])
+		line = line.replace("axiom ","")
+		line = line.replace(" ","")
+		line = line.replace("	","")
+		print line
+		print lift(line)
 	print "------------"
 
