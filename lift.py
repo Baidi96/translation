@@ -83,14 +83,16 @@ file_object = open('input.txt')
 dict = {}
 dict["\equals"] = "Bool,Bool"
 for line in file_object:
-	if line[0:6] =="syntax" :
-		group = (re.search("([a-zA-Z ]\w*\'?)::= ([a-zA-Z]\w*\'?\(?.*\)?)",line[7:len(line)]).group(2))
+	if line.count("syntax") > 0 :
+		print line[7:len(line)]
+		group = (re.search("(.*)::= ([a-zA-Z]\w*\'?\(?.*\)?)", \
+			    line[7:len(line)]).group(2))
 		key = (re.search("([a-zA-Z ]\w*\'?)\)?(.*)\)?",group).group(1))
 		value = (re.search("([a-zA-Z ]\w*\'?)\)?(.*)\)?",group).group(2))
 		value = value[1:len(value)-1]
 		print key + " " + value
 		dict[key] = value
-	elif line[0:5] == "axiom" :
+	elif line.count("axiom") > 0 :
 		print line[6:len(line)]
 		print lift(line[6:len(line)])
 	print "------------"
