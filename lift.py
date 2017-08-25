@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import re
 
-p1 = re.compile("[a-zA-Z]\w*\'?:[a-zA-Z]\w*\'?$") #X;S
+p1 = re.compile("[a-zA-Z]\w*\'?:[a-zA-Z]\w*\'?$") #X:S
 p2 = re.compile("\A\\\\[a][n][d]\(.+\)$") #phi1 /\ phi2
 p3 = re.compile("\A\\\\[n][o][t]\(.+\)$") #not(phi)
 p4 = re.compile("\A\\\\[e][x][i][s][t][s]\(.+\)$") #exists x:s,phi
@@ -12,9 +12,9 @@ def lift(str):
 	if p1.match(str):
 		return "#variable(" + \
     	       (re.search("([a-zA-Z]\w*\'?):([a-zA-Z]\w*\'?)",str).group(1)) + \
-               ",#sort(" + \
+               ",#sort(\"" + \
                (re.search("([a-zA-Z]\w*\'?):([a-zA-Z]\w*\'?)",str).group(2)) + \
-                "))"
+                "\"))"
 	elif p2.match(str):
 		tmp = str[5:len(str)-2] 
 		pos = tmp.index(",")
@@ -36,9 +36,9 @@ def lift(str):
 		tmp = str[8:len(str)-2]
 		return "#exists(" + \
 			   (re.search("([a-zA-Z]\w*\'?):([a-zA-Z]\w*\'?),(.+)",tmp).group(1)) + \
-               ",#sort(" + \
+               ",#sort(\"" + \
                (re.search("([a-zA-Z]\w*\'?):([a-zA-Z]\w*\'?),(.+)",tmp).group(2)) + \
-			   ")," + \
+			   "\")," + \
 			   lift((re.search("([a-zA-Z]\w*\'?):([a-zA-Z]\w*\'?),(.+)",tmp).group(3))) + \
 			   ")"
 	elif p5.match(str):
@@ -81,7 +81,7 @@ def lift(str):
 
 file_object = open('input.txt')
 dict = {}
-dict["\equals"] = "Bool,Bool"
+dict["\equals"] = "\"Bool\",\"Bool\""
 for line in file_object:
 	if line.count("syntax") > 0 :
 		line = line.replace("syntax ","")
@@ -92,8 +92,8 @@ for line in file_object:
 			    line).group(2))
 		key = (re.search("([a-zA-Z]\w*\'?)\)?(.*)\)?",group).group(1))
 		value = (re.search("([a-zA-Z]\w*\'?)\)?(.*)\)?",group).group(2))
-		value = value[1:len(value)-1]
-		value = value.replace(" ","")
+		value = value.replace("(","\"").replace(")","\"")
+		value = value.replace(" ","").replace(",","\",\"")
 		print key + " " + value
 		dict[key] = value
 	elif line.count("axiom") > 0 :
